@@ -1,12 +1,19 @@
 "use client";
 
+import { useContext } from 'react';
 import logo from '@/assets/logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { PlanContext } from '@/context/PlanContext';
 
 const Navbar = () => {
   const pathname = usePathname();
+  const context = useContext(PlanContext);
+
+  // Dynamic count calculation from context
+  const todayPlanCount = context?.todayPlan?.length || 0;
+  const savedPlanCount = context?.savedPlan?.length || 0;
 
   const links = (
     <>
@@ -72,17 +79,19 @@ const Navbar = () => {
 
           {/* Right Section: Plan & Saved Badges */}
           <div className="flex items-center gap-5 text-sm font-medium shrink-0">
+            {/* Today's Plan Count */}
             <div className="flex items-center gap-2 text-zinc-300">
               <span>Plan</span>
               <span className="w-6 h-6 rounded-full bg-[#8bf500] text-black font-bold text-xs flex items-center justify-center">
-                0
+                {todayPlanCount}
               </span>
             </div>
 
+            {/* Saved Plan Count */}
             <div className="flex items-center gap-2 text-zinc-300">
               <span>Saved</span>
               <span className="w-6 h-6 rounded-full border border-zinc-700 text-zinc-400 font-bold text-xs flex items-center justify-center">
-                0
+                {savedPlanCount}
               </span>
             </div>
           </div>

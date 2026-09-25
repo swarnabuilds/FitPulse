@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PlanContext } from "@/context/PlanContext";
@@ -23,7 +23,24 @@ const MyPlanPage = () => {
   const removeFromTodayPlan = context?.removeFromTodayPlan || (() => {});
   const removeFromSavedPlan = context?.removeFromSavedPlan || (() => {});
 
+  // Sort State (Default: duration)
+  const [sortOption, setSortOption] = useState<"duration" | "calories" | "rating">("duration");
+
   const currentList = activeTab === "today" ? todayPlan : savedPlan;
+
+  // Sorting Logic (Boro theke Choto)
+  const sortedList = [...currentList].sort((a, b) => {
+    if (sortOption === "duration") {
+      return (Number(b.duration) || 0) - (Number(a.duration) || 0);
+    }
+    if (sortOption === "calories") {
+      return (Number(b.caloriesBurned) || 0) - (Number(a.caloriesBurned) || 0);
+    }
+    if (sortOption === "rating") {
+      return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+    }
+    return 0;
+  });
 
   // Dynamic Stats Calculation
   const stats = {
@@ -90,9 +107,7 @@ const MyPlanPage = () => {
 
       {/* Controls Bar: DaisyUI Tabs & Dropdown */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
-
-
-        {/* tab  */}
+        {/* Tab Selection */}
         <div
           role="tablist"
           className="tabs tabs-boxed bg-[#12141a] p-1 rounded-xl border border-zinc-800/80 inline-flex w-fit"
@@ -100,7 +115,7 @@ const MyPlanPage = () => {
           <button
             role="tab"
             onClick={() => setActiveTab("today")}
-            className={`tab text-xs font-bold transition-all px-5 py-2 rounded-lg ${
+            className={`tab text-xs font-bold transition-all px-5 py-2 rounded-lg cursor-pointer ${
               activeTab === "today"
                 ? "bg-zinc-800 text-white shadow-md"
                 : "text-zinc-400 hover:text-white"
@@ -112,7 +127,7 @@ const MyPlanPage = () => {
           <button
             role="tab"
             onClick={() => setActiveTab("saved")}
-            className={`tab text-xs font-bold transition-all px-5 py-2 rounded-lg ${
+            className={`tab text-xs font-bold transition-all px-5 py-2 rounded-lg cursor-pointer ${
               activeTab === "saved"
                 ? "bg-zinc-800 text-white shadow-md"
                 : "text-zinc-400 hover:text-white"
@@ -129,22 +144,22 @@ const MyPlanPage = () => {
             <div
               tabIndex={0}
               role="button"
-              className="btn btn-xs bg-[#12141a] hover:bg-zinc-800 text-white border-zinc-800 normal-case font-semibold gap-2 rounded-lg px-3 py-1.5 h-auto min-h-0"
+              className="btn btn-xs bg-[#12141a] hover:bg-zinc-800 text-white border-zinc-800 normal-case font-semibold gap-2 rounded-lg px-3 py-1.5 h-auto min-h-0 cursor-pointer capitalize"
             >
-              Duration <FiChevronDown />
+              {sortOption} <FiChevronDown />
             </div>
             <ul
               tabIndex={0}
               className="dropdown-content z-[1] menu p-2 shadow-2xl bg-[#12141a] border border-zinc-800 rounded-xl w-36 mt-2 text-xs text-zinc-300"
             >
               <li>
-                <a>Duration</a>
+                <button onClick={() => setSortOption("duration")}>Duration</button>
               </li>
               <li>
-                <a>Calories</a>
+                <button onClick={() => setSortOption("calories")}>Calories</button>
               </li>
               <li>
-                <a>Rating</a>
+                <button onClick={() => setSortOption("rating")}>Rating</button>
               </li>
             </ul>
           </div>
@@ -152,7 +167,7 @@ const MyPlanPage = () => {
       </div>
 
       {/* Content Section: Cards or Empty Container */}
-      {currentList.length === 0 ? (
+      {sortedList.length === 0 ? (
         <div className="border border-dashed border-zinc-800/90 rounded-2xl p-12 sm:p-20 text-center flex flex-col items-center justify-center bg-[#0d0e11]/50 min-h-[350px]">
           <h2 className="text-xl sm:text-2xl font-black uppercase text-white tracking-wider">
             NOTHING HERE YET
@@ -170,7 +185,7 @@ const MyPlanPage = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {currentList.map((item) => (
+          {sortedList.map((item) => (
             <div
               key={item.id}
               className="bg-[#12141a] border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:border-zinc-700"
