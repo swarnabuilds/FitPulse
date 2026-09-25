@@ -1,9 +1,19 @@
-import { getPlans } from "@/lib/plans";
 import PlanCard from "../shared/PlanCard";
 import { IExercise } from "@/type/plan";
 
+
+const getPlan = async() => {
+  const res = await fetch('https://api.abcz.workers.dev/api/fitlog', {cache: 'no-store'});
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch plans data: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+}
 const Plan = async () => {
-  const AllPlans = await getPlans();
+  const AllPlans = await getPlan();
 
   return (
     <section className="container mx-auto px-4 sm:px-6 lg:px-8 my-10">

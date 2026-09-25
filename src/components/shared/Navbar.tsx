@@ -24,9 +24,9 @@ const Navbar = () => {
       </li>
       <li>
         <Link 
-          href="/my-plan" 
+          href="/myPlan" 
           className={`px-5 py-2 rounded-full font-medium transition-all duration-200 text-sm block ${
-            pathname === '/my-plan'
+            pathname === '/myPlan'
               ? 'bg-[#8bf500]/10 text-[#8bf500] font-semibold' 
               : 'text-zinc-400 hover:text-white'
           }`}
