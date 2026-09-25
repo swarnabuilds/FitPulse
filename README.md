@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Project Name
+FITLOG – Dynamic Fitness & Workout Tracker
 
-## Getting Started
+Short Description
+FITLOG is a modern, responsive web application designed for fitness enthusiasts to browse workout routines, manage personal daily exercise plans, track stats like calories and workout duration, and save routines for quick access. Built with Next.js App Router and Tailwind CSS, it offers a seamless real-time state management experience.
 
-First, run the development server:
+Technologies Used
+Frontend Framework: Next.js 15+ (React 19, App Router)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Styling: Tailwind CSS, DaisyUI
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+State Management: React Context API (PlanContext)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Icons & Notifications: React Icons (react-icons), React Toastify (react-toastify)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Type Safety: TypeScript
 
-## Learn More
+5 Key Features of the Project
+Real-time Navigation Counters & Badges:
+Integrates dynamic context-driven badges in the header navbar to show the real-time count of active plans ("Today's Plan") and bookmarked workouts ("Saved").
 
-To learn more about Next.js, take a look at the following resources:
+Interactive Daily Plan Management:
+Users can add workouts to their daily regimen, mark them as completed ("Mark as Done"), or remove them seamlessly across tabs ("Today's Plan" vs. "Saved") with automatic global state synchronization.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Dynamic Sorting & Filtering:
+Allows users to dynamically sort their workout plan list in descending order (highest to lowest) based on key metrics: Duration (minutes), Calories Burned (kcal), or User Rating.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Live Workout Stats Calculation:
+Automatically aggregates real-time totals for total exercises count, overall active duration in minutes, and estimated burned calories across the active list.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Custom Dark-themed Error & Not-Found Handling:
+Features custom-designed dark UI layouts for smooth UX, including a tailored 404 page (not-found.tsx) with quick navigation links back to active routines.

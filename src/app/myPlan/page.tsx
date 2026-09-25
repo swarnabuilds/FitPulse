@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PlanContext } from "@/context/PlanContext";
+import { IExercise } from "@/type/plan";
 import {
   FiChevronDown,
   FiClock,
@@ -11,6 +12,7 @@ import {
   FiStar,
   FiCheck,
   FiX,
+  FiCheckCircle,
 } from "react-icons/fi";
 
 const MyPlanPage = () => {
@@ -18,18 +20,20 @@ const MyPlanPage = () => {
 
   const todayPlan = context?.todayPlan || [];
   const savedPlan = context?.savedPlan || [];
+  const completedPlan = context?.completedPlan || [];
   const activeTab = context?.activeTab || "today";
   const setActiveTab = context?.setActiveTab || (() => {});
+  const markAsDone = context?.markAsDone;
   const removeFromTodayPlan = context?.removeFromTodayPlan || (() => {});
   const removeFromSavedPlan = context?.removeFromSavedPlan || (() => {});
 
-  // Sort State (Default: duration)
+  // Sort State
   const [sortOption, setSortOption] = useState<"duration" | "calories" | "rating">("duration");
 
   const currentList = activeTab === "today" ? todayPlan : savedPlan;
 
-  // Sorting Logic (Boro theke Choto)
-  const sortedList = [...currentList].sort((a, b) => {
+  // Dynamic Sorting Logic
+  const sortedList = [...currentList].sort((a: IExercise, b: IExercise) => {
     if (sortOption === "duration") {
       return (Number(b.duration) || 0) - (Number(a.duration) || 0);
     }
@@ -42,17 +46,25 @@ const MyPlanPage = () => {
     return 0;
   });
 
-  // Dynamic Stats Calculation
+  // Dynamic Stats Calculation (No 'any' error)
   const stats = {
     exercises: currentList.length,
     minutes: currentList.reduce(
-      (acc, curr) => acc + (Number(curr.duration) || 0),
+      (acc: number, curr: IExercise) => acc + (Number(curr.duration) || 0),
       0
     ),
     calories: currentList.reduce(
-      (acc, curr) => acc + (Number(curr.caloriesBurned) || 0),
+      (acc: number, curr: IExercise) => acc + (Number(curr.caloriesBurned) || 0),
       0
     ),
+  };
+
+  const handleMarkAsDone = (item: IExercise) => {
+    if (markAsDone) {
+      markAsDone(item);
+    } else {
+      removeFromTodayPlan(item.id);
+    }
   };
 
   const handleRemove = (id: string | number) => {
@@ -66,13 +78,23 @@ const MyPlanPage = () => {
   return (
     <main className="my-12 min-h-screen bg-[#0b0c0e] text-white py-10 px-4 sm:px-8 lg:px-16 container mx-auto">
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider text-white">
-          MY PLAN
-        </h1>
-        <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-medium">
-          Cap of five lifts for today. Finish them, then load more.
-        </p>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider text-white">
+            MY PLAN
+          </h1>
+          <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-medium">
+            Cap of five lifts for today. Finish them, then load more.
+          </p>
+        </div>
+
+        {/* Completed Count Badge */}
+        {completedPlan.length > 0 && (
+          <div className="flex items-center gap-2 bg-[#8bf500]/10 border border-[#8bf500]/30 text-[#8bf500] px-4 py-2 rounded-xl text-xs font-bold w-fit">
+            <FiCheckCircle className="text-base" />
+            <span>Marked the workout done: {completedPlan.length}</span>
+          </div>
+        )}
       </div>
 
       {/* Stats Cards Box */}
@@ -105,9 +127,8 @@ const MyPlanPage = () => {
         </div>
       </div>
 
-      {/* Controls Bar: DaisyUI Tabs & Dropdown */}
+      {/* Controls Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
-        {/* Tab Selection */}
         <div
           role="tablist"
           className="tabs tabs-boxed bg-[#12141a] p-1 rounded-xl border border-zinc-800/80 inline-flex w-fit"
@@ -153,20 +174,35 @@ const MyPlanPage = () => {
               className="dropdown-content z-[1] menu p-2 shadow-2xl bg-[#12141a] border border-zinc-800 rounded-xl w-36 mt-2 text-xs text-zinc-300"
             >
               <li>
-                <button onClick={() => setSortOption("duration")}>Duration</button>
+                <button
+                  onClick={() => setSortOption("duration")}
+                  className={sortOption === "duration" ? "text-[#8bf500] font-bold" : ""}
+                >
+                  Duration
+                </button>
               </li>
               <li>
-                <button onClick={() => setSortOption("calories")}>Calories</button>
+                <button
+                  onClick={() => setSortOption("calories")}
+                  className={sortOption === "calories" ? "text-[#8bf500] font-bold" : ""}
+                >
+                  Calories
+                </button>
               </li>
               <li>
-                <button onClick={() => setSortOption("rating")}>Rating</button>
+                <button
+                  onClick={() => setSortOption("rating")}
+                  className={sortOption === "rating" ? "text-[#8bf500] font-bold" : ""}
+                >
+                  Rating
+                </button>
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* Content Section: Cards or Empty Container */}
+      {/* Content Section */}
       {sortedList.length === 0 ? (
         <div className="border border-dashed border-zinc-800/90 rounded-2xl p-12 sm:p-20 text-center flex flex-col items-center justify-center bg-[#0d0e11]/50 min-h-[350px]">
           <h2 className="text-xl sm:text-2xl font-black uppercase text-white tracking-wider">
@@ -185,17 +221,16 @@ const MyPlanPage = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {sortedList.map((item) => (
+          {sortedList.map((item: IExercise) => (
             <div
               key={item.id}
               className="bg-[#12141a] border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:border-zinc-700"
             >
-              {/* Card Left: Thumbnail & Main Infos */}
               <div className="flex items-center gap-4">
                 <div className="relative w-20 h-20 sm:w-24 sm:h-20 bg-zinc-900 rounded-xl overflow-hidden shrink-0 border border-zinc-800">
                   <Image
                     src={item.image}
-                    alt={item.name}
+                    alt={item.name || "Workout image"}
                     fill
                     className="object-cover"
                   />
@@ -208,7 +243,6 @@ const MyPlanPage = () => {
                     {item.equipment}
                   </p>
 
-                  {/* Badges / Stats */}
                   <div className="flex items-center gap-3 text-xs text-zinc-300 mt-2 font-medium">
                     <span className="flex items-center gap-1">
                       <FiClock className="text-[#8bf500]" />
@@ -228,7 +262,6 @@ const MyPlanPage = () => {
                 </div>
               </div>
 
-              {/* Card Right: Action Buttons */}
               <div className="flex items-center gap-3 w-full sm:w-auto justify-end border-t sm:border-t-0 border-zinc-800/60 pt-3 sm:pt-0">
                 <Link
                   href={`/workout/${item.id}`}
@@ -238,8 +271,8 @@ const MyPlanPage = () => {
                 </Link>
 
                 <button
-                  onClick={() => handleRemove(item.id)}
-                  className="px-4 py-2 bg-[#8bf500] hover:bg-[#7be000] text-black font-extrabold rounded-full text-xs flex items-center gap-1.5 transition-all shadow-md shadow-[#8bf500]/10"
+                  onClick={() => handleMarkAsDone(item)}
+                  className="px-4 py-2 bg-[#8bf500] hover:bg-[#7be000] text-black font-extrabold rounded-full text-xs flex items-center gap-1.5 transition-all shadow-md shadow-[#8bf500]/10 cursor-pointer"
                 >
                   <FiCheck className="text-sm stroke-[3]" />
                   Mark as Done
@@ -247,7 +280,7 @@ const MyPlanPage = () => {
 
                 <button
                   onClick={() => handleRemove(item.id)}
-                  className="p-2 text-zinc-500 hover:text-zinc-300 transition-colors ml-1"
+                  className="p-2 text-zinc-500 hover:text-zinc-300 transition-colors ml-1 cursor-pointer"
                   title="Remove"
                 >
                   <FiX className="text-base" />
