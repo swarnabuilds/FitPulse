@@ -37,7 +37,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // Toast notification
-    toast.success(`${item.name || "Workout"} marked as done! 🎉`, {
+    toast.success(`${item.name || "Workout"} marked as done!`, {
       position: "top-right",
       autoClose: 3000,
       theme: "dark",

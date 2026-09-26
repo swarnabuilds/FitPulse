@@ -14,6 +14,7 @@ const Navbar = () => {
   // Dynamic count calculation from context
   const todayPlanCount = context?.todayPlan?.length || 0;
   const savedPlanCount = context?.savedPlan?.length || 0;
+  const setActiveTab = context?.setActiveTab;
 
   const links = (
     <>
@@ -77,23 +78,31 @@ const Navbar = () => {
             </ul>
           </div>
 
-          {/* Right Section: Plan & Saved Badges */}
+
           <div className="flex items-center gap-5 text-sm font-medium shrink-0">
-            {/* Today's Plan Count */}
-            <div className="flex items-center gap-2 text-zinc-300">
-              <span>Plan</span>
-              <span className="w-6 h-6 rounded-full bg-[#8bf500] text-black font-bold text-xs flex items-center justify-center">
+            {/* Today's Plan Link */}
+            <Link 
+              href="/myPlan" 
+              onClick={() => setActiveTab && setActiveTab("today")}
+              className="flex items-center gap-2 text-zinc-300 hover:text-white transition-colors cursor-pointer group"
+            >
+              <span className="group-hover:text-[#8bf500] transition-colors">Plan</span>
+              <span className="w-6 h-6 rounded-full bg-[#8bf500] text-black font-bold text-xs flex items-center justify-center shadow-md shadow-[#8bf500]/20">
                 {todayPlanCount}
               </span>
-            </div>
+            </Link>
 
-            {/* Saved Plan Count */}
-            <div className="flex items-center gap-2 text-zinc-300">
-              <span>Saved</span>
-              <span className="w-6 h-6 rounded-full border border-zinc-700 text-zinc-400 font-bold text-xs flex items-center justify-center">
+            {/* Saved Plan Link */}
+            <Link 
+              href="/myPlan" 
+              onClick={() => setActiveTab && setActiveTab("saved")}
+              className="flex items-center gap-2 text-zinc-300 hover:text-white transition-colors cursor-pointer group"
+            >
+              <span className="group-hover:text-white transition-colors">Saved</span>
+              <span className="w-6 h-6 rounded-full border border-zinc-700 group-hover:border-zinc-500 text-zinc-400 group-hover:text-white font-bold text-xs flex items-center justify-center transition-colors">
                 {savedPlanCount}
               </span>
-            </div>
+            </Link>
           </div>
 
         </div>
